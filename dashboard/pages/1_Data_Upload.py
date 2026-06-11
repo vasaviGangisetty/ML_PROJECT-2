@@ -5,8 +5,6 @@ import plotly.express as px
 # -------------------------------
 # 1. INITIALIZE SESSION STATE
 # -------------------------------
-# This keeps our loaded dataset active even when you open collapse boxes, 
-# interact with plots, or click buttons.
 if "active_df" not in st.session_state:
     st.session_state.active_df = None
 if "prev_option" not in st.session_state:
@@ -20,7 +18,9 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
         return None
     df = df.copy()
     df.columns = (
-        df.columns.str.replace(r'^\ufeff', '', regex=True)
+        # FIXED: Removed the 'r' prefix so Python decodes the Unicode sequence 
+        # instead of sending raw '\u' to the PyArrow backend
+        df.columns.str.replace('^\ufeff', '', regex=True)
         .str.strip()
         .str.lower()
         .str.replace(r'[\.\s\$]', '_', regex=True)
@@ -64,11 +64,10 @@ def make_unique_columns(df: pd.DataFrame) -> pd.DataFrame:
 @st.cache_data(ttl=600, show_spinner=False)
 def load_data(source):
     try:
-        # Automatically detects commas, semicolons, and tabs across different files
         df = pd.read_csv(source, sep=None, engine="python")
         df = make_unique_columns(df) 
         df = standardize_columns(df)
-        df = make_unique_columns(df) # Safeguard unique names after renaming
+        df = make_unique_columns(df)
         return df
     except Exception as e:
         st.error(f"Error parsing file: {e}")
@@ -143,7 +142,6 @@ def inject_css():
             font-size: 1.9rem !important;
             font-weight: 700 !important;
         }
-        /* Style standard streamlit expanders */
         .streamlit-expanderHeader {
             background-color: rgba(17, 24, 39, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -173,7 +171,6 @@ st.markdown("""
 st.sidebar.markdown("<h3 style='color: #FFFFFF; font-size: 1.15rem; margin-bottom: 12px;'>📥 Data Stream</h3>", unsafe_allow_html=True)
 option = st.sidebar.radio("Choose Source", ["Upload CSV", "Network URL", "Sample Benchmarks"])
 
-# Clear loaded data when switching ingestion options to prevent cross-data pollution
 if st.session_state.prev_option != option:
     st.session_state.active_df = None
     st.session_state.prev_option = option
@@ -193,7 +190,6 @@ elif option == "Network URL":
         st.session_state.active_df = None
 
 elif option == "Sample Benchmarks":
-    # Let users load sample datasets instantly
     if st.sidebar.button("🚀 Load Benchmark"):
         benchmark_df = pd.DataFrame({
             'Date': pd.date_range(start='2023-01-01', periods=365, freq='D'),
@@ -205,17 +201,14 @@ elif option == "Sample Benchmarks":
         })
         st.session_state.active_df = standardize_columns(benchmark_df)
 
-# Retrieve active dataset from the session state
 df = st.session_state.active_df
 
 # -------------------------------
 # 8. ANALYTICS BLOCK
 # -------------------------------
 if df is not None:
-    # Safe modification of dataframe copy
     df = df.copy()
 
-    # Absolute integrity fallback checker
     required_cols = {
         'Region': 'Global',
         'Sales': 0,
@@ -228,12 +221,10 @@ if df is not None:
         if col not in df.columns:
             df[col] = fallback
 
-    # Enforce formatting types safely
     df['Sales'] = pd.to_numeric(df['Sales'], errors='coerce').fillna(0)
     df['Revenue'] = pd.to_numeric(df['Revenue'], errors='coerce').fillna(0)
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
-    # KPIs Row
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Rows Found", f"{len(df):,}")
     m2.metric("Total Revenue", f"${df['Revenue'].sum():,.0f}")
@@ -242,7 +233,6 @@ if df is not None:
 
     st.write("###")
 
-    # Main Visual Layout
     col_l, col_r = st.columns([0.45, 0.55], gap="large")
 
     with col_l:
@@ -250,7 +240,6 @@ if df is not None:
         st.markdown("<h5 style='color:#FFFFFF; margin:0 0 16px 0; font-weight:600; font-size:1rem;'>📋 Data Preview</h5>", unsafe_allow_html=True)
         st.dataframe(df.head(100), height=320, use_container_width=True)
         
-        # Byte conversion is compatible across old and new versions of Streamlit
         csv_bytes = df.to_csv(index=False).encode('utf-8')
         st.download_button(
             label="⬇️ Download Cleaned CSV", 
@@ -282,11 +271,9 @@ if df is not None:
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Advanced Analytics Expander
     with st.expander("📈 Advanced Stream Visualizations"):
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # 1. Date sorting is necessary to avoid intersecting/scrambled lines
         df_sorted = df.dropna(subset=['Date']).sort_values('Date')
         if not df_sorted.empty:
             fig_line = px.line(df_sorted, x="Date", y="Revenue", color="Region", template="plotly_dark", markers=True)
@@ -300,7 +287,6 @@ if df is not None:
         else:
             st.warning("No valid timestamps found to plot trendlines.")
 
-        # 2. Smart Pie chart - auto-group excess products so the chart doesn't clutter
         top_products = df.groupby('Product')['Sales'].sum().reset_index()
         if len(top_products) > 8:
             top_products = top_products.sort_values('Sales', ascending=False)
@@ -321,7 +307,6 @@ if df is not None:
         fig_pie.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_pie, use_container_width=True)
 
-        # 3. Dynamic Scatter
         fig_scatter = px.scatter(
             df, 
             x="Sales", 
@@ -338,7 +323,6 @@ if df is not None:
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
-    # Footer Processing Action
     st.markdown("---")
     if st.button("Initialize Processing Pipeline ➔"):
         st.session_state['data'] = df
@@ -346,7 +330,6 @@ if df is not None:
         st.balloons()
 
 else:
-    # Elegant custom placeholder replacing plain warning text
     st.markdown("""
         <div class="empty-state">
             <div class="empty-icon">📊</div>
