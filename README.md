@@ -1,6 +1,6 @@
 # Nexus AI – Executive Report Compiler
 
-live link: https://ml-project-2-cmah.onrender.com/
+live link: https://ml-project-2-cmah.onrender.com
 
 ## Project Overview
 
