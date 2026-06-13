@@ -22,11 +22,17 @@ The application integrates data analysis, visualization, reporting, and forecast
 
 ---
 
+<img width="1900" height="887" alt="Screenshot 2026-06-13 081553" src="https://github.com/user-attachments/assets/bf2b6e17-baf4-4324-b8e0-7ae5107975e3" />
+
+
 # Key Features
 
 ## 1. Executive Dashboard
 
 Provides a centralized overview of business performance through:
+
+<img width="1502" height="805" alt="Screenshot 2026-06-13 081944" src="https://github.com/user-attachments/assets/9fdac0ab-a7d2-48e4-b987-19dab751108d" />
+
 
 * Total Revenue
 * Total Sales
@@ -40,6 +46,9 @@ Provides a centralized overview of business performance through:
 ## 2. Revenue Analytics
 
 The system performs comprehensive revenue analysis including:
+
+<img width="1896" height="907" alt="Screenshot 2026-06-13 081708" src="https://github.com/user-attachments/assets/a738569b-a007-4a95-b5cf-3573173a1064" />
+
 
 * Revenue Trend Analysis
 * Daily Revenue Tracking
@@ -98,6 +107,9 @@ Analyzes sales and revenue across different regions.
 
 The system supports predictive analytics for future business planning.
 
+<img width="1487" height="871" alt="Screenshot 2026-06-13 081900" src="https://github.com/user-attachments/assets/95002edc-eac6-4ad5-a239-ce5b4086f8e9" />
+
+
 ### Forecasting Features
 
 * Revenue Forecasting
@@ -117,6 +129,9 @@ The system supports predictive analytics for future business planning.
 ## 6. Inventory Optimization
 
 Provides inventory-related insights for supply chain management.
+
+<img width="1442" height="871" alt="Screenshot 2026-06-13 081923" src="https://github.com/user-attachments/assets/a13b7499-fb60-4757-99f8-03558f85eb21" />
+
 
 ### Features
 
@@ -138,6 +153,8 @@ Provides inventory-related insights for supply chain management.
 ## 7. Anomaly Detection
 
 Automatically identifies unusual patterns in operational data.
+<img width="1887" height="905" alt="Screenshot 2026-06-13 081643" src="https://github.com/user-attachments/assets/32b29fc2-048b-4b48-9da2-2c22c04ae821" />
+
 
 ### Detection Areas
 
@@ -185,6 +202,9 @@ Users can customize report appearance using built-in themes.
 ## 10. Report Generation
 
 Generates executive-level reports automatically.
+
+<img width="1467" height="823" alt="Screenshot 2026-06-13 081934" src="https://github.com/user-attachments/assets/a562a0e1-e967-44da-a42b-9463fbc88a23" />
+
 
 ### Export Formats
 
